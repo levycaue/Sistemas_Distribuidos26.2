@@ -13,7 +13,6 @@ public class EleitorClient {
     private static final int PORTA_MULTICAST = 6000;
 
     public static void main(String[] args) {
-        // Thread para escutar notas informativas via Multicast UDP
         Thread threadMulticast = new Thread(() -> {
             try (MulticastSocket socketUdp = new MulticastSocket(PORTA_MULTICAST)) {
                 InetAddress grupo = InetAddress.getByName(IP_MULTICAST);
@@ -31,12 +30,10 @@ public class EleitorClient {
                     System.out.print("Escolha uma opção (ou Enter para sair): ");
                 }
             } catch (Exception e) {
-                // Tratamento de saída do grupo
             }
         });
         threadMulticast.start();
 
-        // Comunicação TCP Unicast para login e votação
         try (Socket socket = new Socket(SERVER_IP, SERVER_PORT);
              ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());

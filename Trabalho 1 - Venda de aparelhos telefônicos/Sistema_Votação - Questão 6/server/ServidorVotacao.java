@@ -11,17 +11,14 @@ public class ServidorVotacao {
     private static final String IP_MULTICAST = "230.0.0.2";
     private static final int PORTA_MULTICAST = 6000;
     
-    // Recursos compartilhados
     private static final List<Candidato> candidatos = Collections.synchronizedList(new ArrayList<>());
     private static volatile boolean votacaoAberta = true;
-    private static final int TEMPO_VOTACAO_SEGUNDOS = 60; // Prazo máximo de votação
+    private static final int TEMPO_VOTACAO_SEGUNDOS = 60;
 
     public static void main(String[] args) {
-        // Inicializa alguns candidatos padrão
         candidatos.add(new Candidato(1, "Candidato A (Tecnologia)"));
         candidatos.add(new Candidato(2, "Candidato B (Inovação)"));
 
-        // Temporizador para fechar a votação automaticamente
         new Thread(() -> {
             try {
                 Thread.sleep(TEMPO_VOTACAO_SEGUNDOS * 1000L);
@@ -33,7 +30,6 @@ public class ServidorVotacao {
             calcularResultadosFinais();
         }).start();
 
-        // Servidor TCP Unicast multithreading
         try (ServerSocket serverSocket = new ServerSocket(PORTA_TCP)) {
             System.out.println("Servidor de Votação TCP rodando na porta " + PORTA_TCP);
             System.out.println("Votação aberta por " + TEMPO_VOTACAO_SEGUNDOS + " segundos.");
@@ -84,18 +80,16 @@ public class ServidorVotacao {
             try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                  ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
 
-                String tipoUsuario = (String) ois.readObject(); // "ELEITOR" ou "ADMIN"
+                String tipoUsuario = (String) ois.readObject(); // 
 
                 if ("ELEITOR".equalsIgnoreCase(tipoUsuario)) {
                     if (!votacaoAberta) {
                         oos.writeObject("ERRO: Votação encerrada.");
                         return;
                     }
-                    // Envia lista de candidatos
                     oos.writeObject(new ArrayList<>(candidatos));
                     oos.flush();
 
-                    // Recebe o ID do candidato votado
                     int idVoto = ois.readInt();
                     synchronized (candidatos) {
                         Optional<Candidato> escolhido = candidatos.stream().filter(c -> c.getId() == idVoto).findFirst();
@@ -111,7 +105,7 @@ public class ServidorVotacao {
                     oos.writeObject("AUTENTICADO_ADMIN");
                     oos.flush();
 
-                    String acao = (String) ois.readObject(); // "ADICIONAR", "REMOVER", "NOTIFICAR"
+                    String acao = (String) ois.readObject(); 
                     if ("ADICIONAR".equals(acao)) {
                         String nomeCandidato = (String) ois.readObject();
                         int novoId = candidatos.size() + 1;
@@ -128,7 +122,6 @@ public class ServidorVotacao {
                     }
                 }
             } catch (Exception e) {
-                // Conexão encerrada ou erro
             }
         }
     }
