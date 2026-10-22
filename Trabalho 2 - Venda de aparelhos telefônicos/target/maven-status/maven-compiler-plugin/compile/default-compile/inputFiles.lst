@@ -1,0 +1,15 @@
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\client\ClienteMain.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\interfaces\Vendas.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Capa.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Celular.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Pedido.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Pelicula.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\PowerBank.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Produto.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\model\Vendedor.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\rmi\MensagemRPC.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\rmi\ProtocoloRPC.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\rmi\VendasDispatcher.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\rmi\VendasProxy.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\server\ServicoVendasImpl.java
+C:\Users\Levy\Documents\2026.2\Sistemas Distribuídos\Trabalho 2- Venda de aparelhos telefônicos\src\main\java\server\ServidorMain.java

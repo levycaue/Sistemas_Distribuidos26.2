@@ -1,0 +1,15 @@
+rmi\MensagemRPC.class
+model\Pedido.class
+model\Vendedor.class
+model\Celular.class
+model\Capa.class
+model\Pelicula.class
+rmi\VendasDispatcher.class
+model\PowerBank.class
+rmi\ProtocoloRPC.class
+client\ClienteMain.class
+model\Produto.class
+server\ServicoVendasImpl.class
+rmi\VendasProxy.class
+interfaces\Vendas.class
+server\ServidorMain.class
