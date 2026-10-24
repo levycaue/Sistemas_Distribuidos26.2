@@ -1,14 +1,14 @@
 package server;
 
-import interfaces.Vendas;
 import java.util.HashMap;
 import java.util.Map;
+
+import interfaces.Vendas;
 import model.Celular;
 import model.Pedido;
 import model.Produto;
 import model.Vendedor;
 
-// Implementação real do serviço remoto
 public class ServicoVendasImpl implements Vendas {
     private Map<Integer, Produto> estoque = new HashMap<>();
 

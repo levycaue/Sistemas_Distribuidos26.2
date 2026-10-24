@@ -1,16 +1,16 @@
 package rmi;
 
 import com.google.gson.Gson;
+
 import interfaces.Vendas;
 import model.Celular;
 import model.Pedido;
 import model.Produto;
 import model.Vendedor;
 
-// Classe Proxy do Cliente que encapsula as chamadas de rede via doOperation
 public class VendasProxy implements Vendas {
     private ProtocoloRPC protocolo;
-    private String objectReference = "ServicoVendas"; // Nome do serviço remoto
+    private String objectReference = "ServicoVendas"; 
     private Gson gson = new Gson();
 
     public VendasProxy(ProtocoloRPC protocolo) {

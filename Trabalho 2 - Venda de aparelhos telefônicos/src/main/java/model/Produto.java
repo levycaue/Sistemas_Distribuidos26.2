@@ -8,7 +8,7 @@ public class Produto implements Serializable {
     protected String nome;
     protected double preco;
 
-    public Produto() {} // Construtor padrão para o Gson
+    public Produto() {} 
 
     public Produto(int id, String nome, double preco) {
         this.id = id;
