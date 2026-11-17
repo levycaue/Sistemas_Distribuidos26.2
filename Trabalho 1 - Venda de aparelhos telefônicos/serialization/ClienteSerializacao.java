@@ -14,7 +14,6 @@ public class ClienteSerializacao {
             oos.writeObject(req);
             oos.flush();
 
-            // Desempacota reply
             MensagemDTO rep = (MensagemDTO) ois.readObject();
             System.out.println("Resposta do Servidor: [" + rep.getOperacao() + "] " + rep.getPayload());
 

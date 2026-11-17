@@ -7,7 +7,8 @@ public class TesteStreams {
     public static void main(String[] args) {
         Celular[] celulares = {
             new Celular(1, "iPhone 15", 5500.0, "Apple", 128),
-            new Celular(2, "Galaxy S24", 4800.0, "Samsung", 256)
+            new Celular(2, "Galaxy S24", 4800.0, "Samsung", 256),
+            new Celular(3, "Pixel 8", 4200.0, "Google", 128)
         };
 
         String nomeFicheiro = "celulares.dat";

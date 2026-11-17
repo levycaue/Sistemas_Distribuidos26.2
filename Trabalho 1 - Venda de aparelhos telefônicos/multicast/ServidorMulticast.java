@@ -1,5 +1,4 @@
 package multicast;
-
 import java.io.IOException;
 import java.net.*;
 import java.util.Scanner;
@@ -26,6 +25,8 @@ public class ServidorMulticast {
             InetAddress grupo = InetAddress.getByName(IP_MULTICAST);
             System.out.println("Servidor Multicast ativo em " + IP_MULTICAST + ":" + PORTA_MULTICAST);
             Scanner scanner = new Scanner(System.in);
+
+            
 
             while (true) {
                 System.out.print("Digite o texto da notificação (ex: ALERTA de estoque baixo): ");
