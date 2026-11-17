@@ -1,64 +1,85 @@
 package client;
 
-import interfaces.Vendas;
 import java.util.Scanner;
-import model.*;
+
+import interfaces.Vendas;
+import model.Capa;
+import model.Celular;
+import model.Pedido;
+import model.Pelicula;
+import model.PowerBank;
+import model.Produto;
+import model.Vendedor;
+import mq.FilaBroker;
 import rmi.ProtocoloRPC;
 import rmi.VendasProxy;
 
 public class ClienteMain {
     public static void main(String[] args) {
-        try {
-            ProtocoloRPC protocolo = new ProtocoloRPC("localhost", 7070);
-            Vendas proxy = new VendasProxy(protocolo);
-            Scanner scanner = new Scanner(System.in);
+        try (Scanner scanner = new Scanner(System.in)) {
+            // A conexão direta só é criada quando uma opção RPC é selecionada.
+            Vendas proxy = null;
 
-            System.out.println("=== SISTEMA DE VENDAS (RMI/RPC) ===");
+            System.out.println("=== SISTEMA DE VENDAS (RPC + FILA INDIRETA) ===");
             System.out.print("Informe o ID do Vendedor: ");
             int idVendedor = Integer.parseInt(scanner.nextLine());
             System.out.print("Informe o Nome do Vendedor: ");
-            String nomeVendedor = scanner.nextLine();
-            Vendedor vendedor = new Vendedor(idVendedor, nomeVendedor);
+            Vendedor vendedor = new Vendedor(idVendedor, scanner.nextLine());
 
             while (true) {
                 System.out.println("\n--- MENU DE OPÇÕES ---");
-                System.out.println("1. Processar Venda de um Produto");
-                System.out.println("2. Consultar Estoque por ID");
-                System.out.println("3. Confirmar Pedido");
-                System.out.println("4. Listar Estoque");
+                System.out.println("1. Processar Venda de um Produto (RPC Direto)");
+                System.out.println("2. Consultar Estoque por ID (RPC Direto)");
+                System.out.println("3. Confirmar Pedido (RPC Direto)");
+                System.out.println("4. Listar Estoque (RPC Direto)");
+                System.out.println("5. Confirmar Pedido Assíncrono via Fila (Trabalho 4)");
                 System.out.println("0. Sair");
                 System.out.print("Escolha uma opção: ");
-                
+
                 int opcao = Integer.parseInt(scanner.nextLine());
-                if (opcao == 0) break;
+                if (opcao == 0) {
+                    break;
+                }
 
                 switch (opcao) {
                     case 1: {
-                        Produto p = cadastrarProdutoTeclado(scanner);
-                        System.out.print("Quantidade: ");
-                        int qtd = Integer.parseInt(scanner.nextLine());
-                        boolean ok = proxy.processarVenda(vendedor, p, qtd);
-                        System.out.println("Resultado da venda: " + (ok ? "SUCESSO" : "FALHA"));
+                        proxy = obterProxy(proxy);
+                        Produto produto = cadastrarProdutoTeclado(scanner);
+                        int quantidade = lerQuantidade(scanner);
+                        boolean sucesso = proxy.processarVenda(vendedor, produto, quantidade);
+                        System.out.println("Resultado da venda: " + (sucesso ? "SUCESSO" : "FALHA"));
                         break;
                     }
                     case 2: {
+                        proxy = obterProxy(proxy);
                         System.out.print("ID do produto no estoque: ");
                         int id = Integer.parseInt(scanner.nextLine());
-                        Produto p = proxy.consultarEstoque(id);
-                        System.out.println("Produto retornado: " + p);
+                        System.out.println("Produto retornado: " + proxy.consultarEstoque(id));
                         break;
                     }
                     case 3: {
-                        Produto p = cadastrarProdutoTeclado(scanner);
-                        System.out.print("Quantidade: ");
-                        int qtd = Integer.parseInt(scanner.nextLine());
-                        Pedido pedido = proxy.confirmarPedido(vendedor, p, qtd);
-                        System.out.println("Pedido Confirmado: " + pedido);
+                        proxy = obterProxy(proxy);
+                        Produto produto = cadastrarProdutoTeclado(scanner);
+                        int quantidade = lerQuantidade(scanner);
+                        Pedido pedido = proxy.confirmarPedido(vendedor, produto, quantidade);
+                        System.out.println("Pedido confirmado: " + pedido);
                         break;
                     }
                     case 4: {
-                        String catalogo = proxy.listarProdutosEstoque();
-                        System.out.println("Catálogo: " + catalogo);
+                        proxy = obterProxy(proxy);
+                        System.out.println("Catálogo: " + proxy.listarProdutosEstoque());
+                        break;
+                    }
+                    case 5: {
+                        // A opção de fila não abre socket nem precisa do servidor RPC.
+                        Produto produto = cadastrarProdutoTeclado(scanner);
+                        int quantidade = lerQuantidade(scanner);
+                        Pedido pedido = new Pedido(vendedor, produto, quantidade);
+
+                        // O cliente só confirma sucesso depois da gravação persistente.
+                        FilaBroker.enfileirarPedido(pedido);
+                        System.out.println("[FILA] Pedido " + pedido.getIdPedido()
+                                + " persistido e aguardando processamento.");
                         break;
                     }
                     default:
@@ -67,8 +88,22 @@ public class ClienteMain {
             }
             System.out.println("Encerrando aplicação cliente.");
         } catch (Exception e) {
+            System.err.println("Falha na aplicação cliente: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private static Vendas obterProxy(Vendas proxy) throws Exception {
+        if (proxy == null) {
+            // Esta configuração é usada apenas pelas opções diretas 1 a 4.
+            proxy = new VendasProxy(new ProtocoloRPC("localhost", 7070));
+        }
+        return proxy;
+    }
+
+    private static int lerQuantidade(Scanner scanner) {
+        System.out.print("Quantidade: ");
+        return Integer.parseInt(scanner.nextLine());
     }
 
     private static Produto cadastrarProdutoTeclado(Scanner scanner) {
@@ -97,16 +132,13 @@ public class ClienteMain {
                 return new Celular(id, nome, preco, marca, gb);
             case 2:
                 System.out.print("Modelo compatível: ");
-                String comp = scanner.nextLine();
-                return new Capa(id, nome, preco, comp);
+                return new Capa(id, nome, preco, scanner.nextLine());
             case 3:
                 System.out.print("Tipo de material: ");
-                String mat = scanner.nextLine();
-                return new Pelicula(id, nome, preco, mat);
+                return new Pelicula(id, nome, preco, scanner.nextLine());
             case 4:
                 System.out.print("Capacidade (mAh): ");
-                int mah = Integer.parseInt(scanner.nextLine());
-                return new PowerBank(id, nome, preco, mah);
+                return new PowerBank(id, nome, preco, Integer.parseInt(scanner.nextLine()));
             default:
                 return new Produto(id, nome, preco);
         }
